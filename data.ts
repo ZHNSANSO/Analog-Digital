@@ -12,21 +12,44 @@ import { ANALOG_CHOICE_QUESTIONS } from './data/analogChoice';
 import { ANALOG_JUDGE_QUESTIONS } from './data/analogJudge';
 import { ANALOG_COMPLEX_QUESTIONS } from './data/analogComplex';
 
-const tagDigital = (q: Question): Question => ({ ...q, paper: 'digital' });
-const tagAnalog = (q: Question): Question => ({ ...q, paper: 'analog' });
+import { DIGITAL_PAPER_QUESTIONS_B } from './data/digitalPaperFree';
+
+// 1. Digital Bank (Original)
+const digitalBankRaw = [
+  ...FILL_QUESTIONS,
+  ...CHOICE_QUESTIONS,
+  ...JUDGE_QUESTIONS,
+  ...SIMPLIFY_QUESTIONS,
+  ...ANALYSIS_QUESTIONS,
+  ...DESIGN_QUESTIONS
+];
+const digitalBank = digitalBankRaw.map(q => ({ ...q, paper: 'digital_bank' as const }));
+
+// 2. Analog Bank
+const analogBankRaw = [
+  ...ANALOG_FILL_QUESTIONS,
+  ...ANALOG_CHOICE_QUESTIONS,
+  ...ANALOG_JUDGE_QUESTIONS,
+  ...ANALOG_COMPLEX_QUESTIONS
+];
+const analogBank = analogBankRaw.map(q => ({ ...q, paper: 'analog_bank' as const }));
+
+// 3. Digital Paper (Free)
+// Set A: Clone of Digital Bank
+const digitalPaperA = digitalBankRaw.map(q => ({
+  ...q,
+  id: q.id + '_paperA', // Avoid ID collision
+  paper: 'digital_paper' as const,
+  paperSet: 'A' as const
+}));
+
+// Set B: New questions
+// (Already tagged in file)
+const digitalPaperB = DIGITAL_PAPER_QUESTIONS_B;
 
 export const QUESTIONS: Question[] = [
-  // Digital Electronics
-  ...FILL_QUESTIONS.map(tagDigital),
-  ...CHOICE_QUESTIONS.map(tagDigital),
-  ...JUDGE_QUESTIONS.map(tagDigital),
-  ...SIMPLIFY_QUESTIONS.map(tagDigital),
-  ...ANALYSIS_QUESTIONS.map(tagDigital),
-  ...DESIGN_QUESTIONS.map(tagDigital),
-
-  // Analog Electronics
-  ...ANALOG_FILL_QUESTIONS.map(tagAnalog),
-  ...ANALOG_CHOICE_QUESTIONS.map(tagAnalog),
-  ...ANALOG_JUDGE_QUESTIONS.map(tagAnalog),
-  ...ANALOG_COMPLEX_QUESTIONS.map(tagAnalog),
+  ...digitalBank,
+  ...analogBank,
+  ...digitalPaperA,
+  ...digitalPaperB
 ];

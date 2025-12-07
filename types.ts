@@ -4,15 +4,17 @@ export enum QuestionType {
   SINGLE_CHOICE = '二、单项选择题',
   JUDGMENT = '三、判断题',
   // Digital specific
-  SIMPLIFICATION = '四、函数化简题',
+  SIMPLIFICATION = '三、化简题', 
+  DRAWING = '四、画图题',
   DIGITAL_ANALYSIS = '五、分析题',
   DESIGN = '六、设计应用题',
+  COMPREHENSIVE = '七、综合题',
   // Analog specific
   ANALOG_ANALYSIS = '四、分析题',
   CALCULATION = '五、计算题',
 }
 
-export type PaperType = 'digital' | 'analog';
+export type PaperType = 'digital_bank' | 'analog_bank' | 'digital_paper';
 
 export interface Question {
   id: string;
@@ -24,6 +26,7 @@ export interface Question {
   explanation?: string;
   imageUrl?: string;
   paper?: PaperType;
+  paperSet?: 'A' | 'B'; // A卷 或 B卷
 }
 
 export type AppView = 'all' | 'bookmarks' | 'wrong' | QuestionType;
@@ -33,4 +36,5 @@ export interface AppState {
   wrongAnswers: string[];
   theme: 'light' | 'dark';
   currentPaper: PaperType;
+  currentPaperSet: 'A' | 'B';
 }

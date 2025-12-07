@@ -11,11 +11,28 @@ const MainContent: React.FC = () => {
   const [view, setView] = useState<AppView>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { bookmarks, wrongAnswers, currentPaper } = useApp();
+  const { bookmarks, wrongAnswers, currentPaper, currentPaperSet } = useApp();
+
+  const currentPaperLabel = useMemo(() => {
+      switch(currentPaper) {
+          case 'digital_bank': return '数字电子技术题库';
+          case 'analog_bank': return '模拟电子技术题库';
+          case 'digital_paper': 
+              return `数字电子试卷(${currentPaperSet}卷)`;
+          default: return '题库';
+      }
+  }, [currentPaper, currentPaperSet]);
 
   const filteredQuestions = useMemo(() => {
+    // 1. Filter by Paper ID
     let result = QUESTIONS.filter(q => q.paper === currentPaper);
 
+    // 2. Filter by Paper Set (if applicable)
+    if (currentPaper === 'digital_paper') {
+        result = result.filter(q => q.paperSet === currentPaperSet);
+    }
+
+    // 3. Filter by View
     if (view === 'bookmarks') {
       result = result.filter(q => bookmarks.includes(q.id));
     } else if (view === 'wrong') {
@@ -24,6 +41,7 @@ const MainContent: React.FC = () => {
       result = result.filter(q => q.type === view);
     }
 
+    // 4. Search
     if (searchQuery.trim()) {
       const qLower = searchQuery.toLowerCase();
       result = result.filter(q => 
@@ -32,17 +50,19 @@ const MainContent: React.FC = () => {
       );
     }
 
-    return result.sort((a, b) => {
-      // Custom sort order based on enum values logic isn't strictly necessary if filtered by paper
-      // but good for "all" view debugging
-      return a.number - b.number;
-    });
-  }, [view, searchQuery, bookmarks, wrongAnswers, currentPaper]);
+    return result.sort((a, b) => a.number - b.number);
+  }, [view, searchQuery, bookmarks, wrongAnswers, currentPaper, currentPaperSet]);
 
   const stats = {
-    total: QUESTIONS.filter(q => q.paper === currentPaper).length,
-    bookmarks: bookmarks.filter(id => QUESTIONS.find(q => q.id === id)?.paper === currentPaper).length,
-    wrong: wrongAnswers.filter(id => QUESTIONS.find(q => q.id === id)?.paper === currentPaper).length
+    total: QUESTIONS.filter(q => q.paper === currentPaper && (currentPaper !== 'digital_paper' || q.paperSet === currentPaperSet)).length,
+    bookmarks: bookmarks.filter(id => {
+        const q = QUESTIONS.find(q => q.id === id);
+        return q?.paper === currentPaper && (currentPaper !== 'digital_paper' || q.paperSet === currentPaperSet);
+    }).length,
+    wrong: wrongAnswers.filter(id => {
+        const q = QUESTIONS.find(q => q.id === id);
+        return q?.paper === currentPaper && (currentPaper !== 'digital_paper' || q.paperSet === currentPaperSet);
+    }).length
   };
 
   return (
@@ -85,8 +105,8 @@ const MainContent: React.FC = () => {
                 />
             </div>
             
-            <div className="hidden md:block text-sm text-gray-500 font-medium">
-                当前试卷: <span className="text-primary">{currentPaper === 'digital' ? '数字电子技术' : '模拟电子技术'}</span>
+            <div className="hidden md:block text-sm text-gray-500 font-medium whitespace-nowrap">
+                当前: <span className="text-primary font-bold">{currentPaperLabel}</span>
             </div>
         </header>
 
@@ -110,6 +130,7 @@ const MainContent: React.FC = () => {
                             <Search size={32} />
                         </div>
                         <p>没有找到相关题目</p>
+                        {view === 'bookmarks' && <p className="text-sm mt-2">点击题目右上角的书签图标即可收藏</p>}
                     </div>
                 ) : (
                     filteredQuestions.map((q) => (
