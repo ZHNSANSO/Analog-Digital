@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>专业理论强化训练</title>
+    
+    <!-- Native Math Styles -->
+    <style>
+      :root {
+        --fallback-bg: #f9fafb;
+        --fallback-text: #0f172a;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--fallback-bg);
+        color: var(--fallback-text);
+        margin: 0;
+      }
+      
+      /* Emphasis Styling */
+      .highlight-text {
+        color: #2563eb;
+        font-weight: 600;
+        margin: 0 2px;
+      }
+      .dark .highlight-text {
+        color: #60a5fa;
+      }
+      
+      /* Math Rendering Styles - Critical for display */
+      .math-font {
+        font-family: 'Times New Roman', serif;
+        font-style: italic;
+        padding: 0 1px;
+      }
+      
+      .math-overline {
+        border-top: 1px solid currentColor;
+        padding-top: 1px;
+        display: inline-block;
+        line-height: 1;
+        margin-top: 2px;
+        text-decoration: none;
+      }
+      
+      .math-fraction {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        vertical-align: middle;
+        margin: 0 4px;
+        font-size: 0.9em;
+      }
+      .math-num {
+        border-bottom: 1px solid currentColor;
+        padding: 0 2px;
+        width: 100%;
+        text-align: center;
+        display: block;
+      }
+      .math-denom {
+        padding: 0 2px;
+        width: 100%;
+        text-align: center;
+        display: block;
+      }
+    </style>
+
+    <!-- Tailwind CDN with Fallback Logic -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2563eb',
+              secondary: '#475569',
+              darkbg: '#0f172a',
+              cardbg: '#1e293b',
+            }
+          }
+        }
+      }
+    </script>
+    <script>
+      // Fallback: Check if Tailwind loaded, if not, inject local CSS
+      window.addEventListener('load', function() {
+        // Primary Check: Has the script executed and defined the global object?
+        if (typeof window.tailwind === 'undefined') {
+          console.warn('Tailwind CDN failed (window.tailwind is undefined). Loading local fallback CSS.');
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = '/fallback.css'; 
+          document.head.appendChild(link);
+        }
+      });
+    </script>
+    
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.1/client",
+        "react-dom": "https://aistudiocdn.com/react-dom@^19.2.1/",
+        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+        "react/": "https://aistudiocdn.com/react@^19.2.1/",
+        "react": "https://aistudiocdn.com/react@^19.2.1",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+      }
+    }
+    </script>
+</head>
+  <body class="bg-gray-50 text-slate-900 dark:bg-darkbg dark:text-slate-100 transition-colors duration-200">
+    <div id="root"></div>
+  </body>
+</html>
